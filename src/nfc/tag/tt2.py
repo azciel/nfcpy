@@ -332,16 +332,18 @@ class Type2Tag(Tag):
         return lines
 
     def _is_present(self):
-        # Verify that the tag is still present. This is implemented as
-        # reading page 0-3 (from whatever sector is currently active).
+        # ありえないページ (10) に対してreadして
+        # ページエラーが出たらまだカードはいると考える
         try:
-            data = self.transceive("\x30\x00")
+            data = self.read(10)[0:4]
         except Type2TagCommandError as error:
+            if error.errno == INVALID_PAGE_ERROR:
+                return True
             if error.errno != TIMEOUT_ERROR:
                 log.warning("unexpected error in presence check: %s" % error)
             return False
         else:
-            return bool(data and len(data) == 16)
+            return True
 
     def format(self, version=None, wipe=None):
         """Erase the NDEF message on a Type 2 Tag.
