@@ -20,3 +20,6 @@ pip install git+https://github.com/azciel/nfcpy.git
 
 あとは本家と同じ。
 
+---
+
+本家README -> [README.rst](README.rst)
