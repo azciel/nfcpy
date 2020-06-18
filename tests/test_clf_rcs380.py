@@ -44,8 +44,8 @@ def ERR():
     return HEX('0000FF01FF7F8100')
 
 
-@pytest.fixture()  # noqa: F811
-def transport(mocker):
+@pytest.fixture()
+def transport(mocker):  # noqa: F811
     mocker.patch('nfc.clf.transport.USB.__init__').return_value = None
     transport = nfc.clf.transport.USB(1, 1)
     mocker.patch.object(transport, 'write', autospec=True)
@@ -373,12 +373,12 @@ class TestChipset(object):
             call(CMD('120a00')), call(ACK()),
         ]
 
-    @pytest.mark.parametrize("request", [None, 0x60, 0x61, 0x80])
-    def test_get_firmware_version(self, chipset, request):
+    @pytest.mark.parametrize("request_data", [None, 0x60, 0x61, 0x80])
+    def test_get_firmware_version(self, chipset, request_data):
         chipset.transport.read.side_effect = [ACK(), RSP('210123')]
-        assert chipset.get_firmware_version(request) == HEX('0123')
+        assert chipset.get_firmware_version(request_data) == HEX('0123')
         assert chipset.transport.write.mock_calls == [
-            call(CMD('20' + (('%02x' % request) if request else '')))
+            call(CMD('20' + (('%02x' % request_data) if request_data else '')))
         ]
 
     def test_get_command_type(self, chipset):
@@ -533,6 +533,7 @@ class TestDevice(object):
         assert target.sens_res == HEX('4400')
         assert target.sdd_res == HEX('01020304')
         assert target.sel_res == HEX('00')
+
         assert device.chipset.transport.write.mock_calls == [call(_) for _ in [
             CMD('00 02030f03'),
             CMD('02 00180101020103000400050006000708'

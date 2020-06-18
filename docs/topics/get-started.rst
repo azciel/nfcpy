@@ -52,8 +52,7 @@ Then, install libusb:
 
 **Install Python and nfcpy**
 
-Download and install the latest version of `Python`_ 2.7.x (
-*nfcpy* does not support Python 3 (yet) [#py3issue]_).
+Download and install `Python`_ (2.7 or 3.5 or later).
 
 .. note::
 
@@ -587,7 +586,7 @@ request with a web link to open.
    >>> socket.connect('urn:nfc:sn:snep')
    >>> records = [ndef.UriRecord("http://nfcpy.org")]
    >>> message = b''.join(ndef.message_encoder(records))
-   >>> socket.send("\x10\x02\x00\x00\x00" + chr(len(message)) + message)
+   >>> socket.send(b"\x10\x02\x00\x00\x00" + chr(len(message)) + message)
    >>> socket.recv()
    '\x10\x81\x00\x00\x00\x00'
    >>> socket.close()
@@ -617,6 +616,3 @@ different service name.
 
 .. _NFC Forum Assigned Numbers Register:
    http://members.nfc-forum.org/specs/nfc_forum_assigned_numbers_register
-
-
-.. [#py3issue] https://github.com/nfcpy/nfcpy/issues/47
